@@ -1,0 +1,32 @@
+BenchPress
+==========
+
+BenchPress is a library used to run micro-benchmarks on Haskell code.
+It produces detailed reports of the run benchmark that can be used to
+better understand the behavior of the function under test.
+
+Here's some example output:
+
+$ ./my-benchmark
+Times (ms)
+   min      mean    +/-sd    median    max
+ 197.840  321.024  134.126  272.296  603.299
+
+Percentiles (ms)
+  50%  266.748
+  66%  292.810
+  75%  293.004
+  80%  293.004
+  90%  532.179
+  95%  603.299
+  98%  603.299
+  99%  603.299
+ 100%  603.299
+
+INSTALLING
+----------
+
+BenchPress uses the Cabal build infrastructure for building and
+installing.  If you have cabal-install installed it is as simple as:
+
+$ cabal install benchpress
