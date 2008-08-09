@@ -152,7 +152,7 @@ benchmark iters ma = do
                   return $! elapsed : timings
 
 -- | Convenience function that runs a benchmark using 'benchmark' and
--- prints timing statistics.
+-- prints timing statistics.  Writes output to standard output.
 bench :: Int -> Benchmark a -> IO ()
 bench iters bm = do
   stats <- benchmark iters bm
@@ -169,7 +169,7 @@ bench iters bm = do
 -- | Convenience function that runs several benchmarks using
 -- 'benchmark' and prints a timing statistics summary.  Each benchmark
 -- has an associated label that is used to identify the benchmark in
--- the printed results.
+-- the printed results.  Writes output to standard output.
 benchMany :: Int -> [(String, Benchmark a)] -> IO ()
 benchMany iters bms = do
   results <- mapM (benchmark iters . snd) bms
