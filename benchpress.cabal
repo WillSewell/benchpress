@@ -1,12 +1,17 @@
 name:           benchpress
 version:        0.1
 synopsis:       Micro-benchmarking with detailed statistics.
+Description:    Runs benchmarks and produces detailed reports
+		that includes common statistical measures like
+		mean execution time but also groups execution
+		times into percentiles.
 license:        BSD3
 license-file:   LICENSE
 author:         Johan Tibell
 maintainer:     johan.tibell@gmail.com
 build-type:     Simple
 cabal-version:  >= 1.2
+category:       Test
 
 flag split-base
   description: Choose the new smaller, split-up base package.
