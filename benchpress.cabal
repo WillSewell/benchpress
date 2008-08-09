@@ -1,0 +1,26 @@
+name:           benchpress
+version:        0.1
+synopsis:       Micro-benchmarking with detailed statistics.
+license:        BSD3
+license-file:   LICENSE
+author:         Johan Tibell
+maintainer:     johan.tibell@gmail.com
+build-type:     Simple
+cabal-version:  >= 1.2
+
+flag split-base
+  description: Choose the new smaller, split-up base package.
+
+library
+  exposed-modules:  Test.BenchPress
+
+  other-modules:  Math.Statistics
+
+  if flag(split-base)
+    build-depends:  base >= 3 && < 3.1
+  else
+    build-depends:  base >= 2.1 && < 3
+  build-depends:  mtl >= 1 && < 1.2,
+                  time >= 1.1 && < 1.2
+
+  ghc-options:  -funbox-strict-fields -Wall
