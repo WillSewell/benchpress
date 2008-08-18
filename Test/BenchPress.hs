@@ -54,6 +54,10 @@ module Test.BenchPress
 
       -- * Benchmark stats
       Stats(..),
+
+      -- * Pretty-printing stats
+      printDetailedStats,
+      printStatsSummaries,
     ) where
 
 import Control.Exception (bracket)
@@ -73,7 +77,7 @@ import Text.Printf (printf)
 -- | @benchmark iters setup teardown action@ runs @action@ @iters@
 -- times measuring the execution time of each run.  @setup@ and
 -- @teardown@ are run before and after each run respectively.
--- @teardown@ will be run even if @action@ raises an exception.
+-- @teardown@ is run even if @action@ raises an exception.
 benchmark :: Int -> IO a -> (a -> IO b) -> (a -> IO c) -> IO Stats
 benchmark iters setup teardown action = do
   timings <- (map millis) `fmap` go iters
@@ -97,34 +101,79 @@ benchmark iters setup teardown action = do
                   return $ elapsed : timings
 
 -- | Convenience function that runs a benchmark using 'benchmark' and
--- prints timing statistics.  Writes output to standard output.
+-- prints timing statistics using 'printDetailedStats'.  Writes
+-- output to standard output.
 bench :: Int -> IO a -> IO ()
 bench iters action = do
   stats <- benchmark iters (return ()) (const $ return ()) (const action)
-  let colWidth = columnWidth [stats]
-  printSummaryHeader 0 colWidth
-  printSummary colWidth "" stats
-  putStrLn ""
-  let psTbl = unlines $ columns (percentiles stats)
-  putStrLn "Percentiles (ms)"
-  putStr psTbl
-    where
-      columns = map $ \(p, value) -> printf " %3d%%  %5.3f" p value
+  printDetailedStats stats
 
 -- | Convenience function that runs several benchmarks using
--- 'benchmark' and prints a timing statistics summary.  Each benchmark
--- has an associated label that is used to identify the benchmark in
--- the printed results.  Writes output to standard output.
+-- 'benchmark' and prints a timing statistics summary using
+-- 'printStatsSummaries'.  Each benchmark has an associated label that
+-- is used to identify the benchmark in the printed results.  Writes
+-- output to standard output.
 benchMany :: Int -> [(String, IO a)] -> IO ()
 benchMany iters bms = do
   results <- forM bms $ \(_, action) ->
              benchmark iters (return ()) (const $ return ()) (const action)
-  let lblLen = maximum (map (length . fst) bms) + 2
-      colWidth = columnWidth results
+  printStatsSummaries $ zip (map fst bms) results
+
+-- ---------------------------------------------------------------------
+-- Benchmark stats
+
+-- | Execution time statistics for a benchmark.  All measured times
+-- are given in milliseconds.
+data Stats = Stats
+    { min         :: Double
+    -- ^ Shortest execution time.
+    , mean        :: Double
+    -- ^ Mean execution time.
+    , stddev      :: Double
+    -- ^ Execution time standard deviation.
+    , median      :: Double
+    -- ^ Median execution time.
+    , max         :: Double
+    -- ^ Longest execution time.
+    , percentiles :: [(Int, Double)]
+    -- ^ Execution time divided into percentiles.  The first component
+    -- of the pair is the percentile given as an integer between 0 and
+    -- 100, inclusive.  The second component is the execution time of
+    -- the slowest iteration within the percentile.
+    } deriving (Eq, Show)
+
+-- ---------------------------------------------------------------------
+-- Pretty-printing stats
+
+-- | Prints detailed statistics.  Printed statistics include min,
+-- mean, standard deviation, median, and max execution time.  Also
+-- prints execution time percentiles.  Writes output to standard
+-- output.
+printDetailedStats :: Stats -> IO ()
+printDetailedStats stats = do
+  printSummaryHeader 0 colWidth
+  printSummary colWidth "" stats
+  putStrLn ""
+  putStrLn "Percentiles (ms)"
+  putStr psTbl
+    where
+      columns  = map $ \(p, value) -> printf " %3d%%  %5.3f" p value
+      colWidth = columnWidth [stats]
+      psTbl    = unlines $ columns (percentiles stats)
+
+-- | Prints a summary row for each benchmark with an associated label.
+-- The summary contains the same statistics as in 'printDetailedStats'
+-- except for the execution time percentiles.
+printStatsSummaries :: [(String, Stats)] -> IO ()
+printStatsSummaries rows = do
   printSummaryHeader lblLen colWidth
-  forM_ (zip (map fst bms) results) $ \(label, stats) ->
+  forM_ rows $ \(label, stats) ->
       printSummary colWidth (printf "%-*s" lblLen (label ++ ": ")) stats
-  return ()
+    where
+      labels   = map fst rows
+      results  = map snd rows
+      lblLen   = maximum (map length labels) + 2
+      colWidth = columnWidth results
 
 -- | Column headers.
 headers :: [String]
@@ -161,29 +210,6 @@ printSummary :: Int -> String -> Stats -> IO ()
 printSummary w label (Stats min' mean' sd median' max' _) =
     putStrLn $ printf "%s %*.3f  %*.3f  %*.3f  %*.3f  %*.3f"
              label w min' w mean' w sd w median' w max'
-
--- ---------------------------------------------------------------------
--- Benchmark stats
-
--- | Timing statistics for the benchmark.  All measured times are
--- given in milliseconds.
-data Stats = Stats
-    { min         :: Double
-    -- ^ Shortest execution time.
-    , mean        :: Double
-    -- ^ Average execution time.
-    , stddev      :: Double
-    -- ^ Execution time standard deviation.
-    , median      :: Double
-    -- ^ Median execution time.
-    , max         :: Double
-    -- ^ Longest execution time.
-    , percentiles :: [(Int, Double)]
-    -- ^ Execution time divided into percentiles.  The first component
-    -- of the pair is the percentile given as an integer between 0 and
-    -- 100, inclusive.  The second component is the execution time of
-    -- the slowest iteration within the percentile.
-    } deriving (Eq, Show)
 
 -- ---------------------------------------------------------------------
 -- Computing statistics
