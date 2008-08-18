@@ -1,10 +1,11 @@
 name:           benchpress
-version:        0.1
+version:        0.2
 synopsis:       Micro-benchmarking with detailed statistics.
-Description:    Runs benchmarks and produces detailed reports
-		that includes common statistical measures like
-		mean execution time but also groups execution
-		times into percentiles.
+Description:    Benchmarks actions and produces statistics
+                such as min, mean, median, standard deviation,
+                and max execution time.  Also computes
+                execution time percentiles.  Comes with
+                functions to pretty-print the results.
 license:        BSD3
 license-file:   LICENSE
 author:         Johan Tibell

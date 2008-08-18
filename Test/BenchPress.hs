@@ -10,12 +10,11 @@
 --
 -- Benchmarks actions and produces statistics such as min, mean,
 -- median, standard deviation, and max execution time.  Also computes
--- execution time percentiles.  There are functions to pretty-print
+-- execution time percentiles.  Comes with functions to pretty-print
 -- the results.
 --
 -- Here's an example showing a benchmark of copying a file:
 --
--- > import Control.Monad.Trans
 -- > import qualified Data.ByteString as B
 -- > import System.IO
 -- > import Test.BenchPress
@@ -38,7 +37,7 @@
 -- >            else return ()
 -- >
 -- > main :: IO ()
--- > main = bench 100 $ liftIO $ do
+-- > main = bench 100 $ do
 -- >          inf <- openBinaryFile inpath ReadMode
 -- >          outf <- openBinaryFile outpath WriteMode
 -- >          copyUsingByteString inf outf
@@ -48,12 +47,7 @@
 ------------------------------------------------------------------------
 
 module Test.BenchPress
-    ( -- * The 'Benchmark' type
-      Benchmark,
-      start,
-      stop,
-
-      -- * Running a benchmark
+    ( -- * Running a benchmark
       benchmark,
       bench,
       benchMany,
@@ -62,79 +56,26 @@ module Test.BenchPress
       Stats(..),
     ) where
 
-import Control.Monad (forM_)
-import Control.Monad.Trans (MonadIO, liftIO)
+import Control.Exception (bracket)
+import Control.Monad (forM, forM_)
 import Data.List (intercalate, sort)
-import Data.Time.Clock (UTCTime, NominalDiffTime, diffUTCTime, getCurrentTime)
+import Data.Time.Clock (NominalDiffTime, diffUTCTime, getCurrentTime)
 import qualified Math.Statistics as Math
 import Prelude hiding (max, min)
 import qualified Prelude
 import Text.Printf (printf)
 
 -- ---------------------------------------------------------------------
--- The Benchmark monad
-
--- | The benchmark state.
-data S = S
-    {-# UNPACK #-} !NominalDiffTime  -- elapsed time
-    {-# UNPACK #-} !(Maybe UTCTime)  -- last mark
-
-initState :: S
-initState = S 0 Nothing
-{-# INLINE initState #-}
-
--- | Starts the benchmark timer again after it has been previously
--- stopped by calling 'stop'.  It's not necessary to call 'start' at
--- the beginning of the action you want to benchmark as it is done
--- automatically by 'benchmark'.
-start :: Benchmark ()
-start = Benchmark $ \(S elapsed _) -> do
-          mark <- liftIO getCurrentTime
-          return ((), S elapsed (Just mark))
-{-# INLINE start #-}
-
--- | Stops the benchmark timer.  Stopping the timer is useful when you
--- need to perform some set up that you don't want to count in the
--- benchmark timings.  It's not necessary to call 'stop' at the end of
--- the action you want to benchmark as it is done automatically by
--- 'benchmark'.
-stop :: Benchmark ()
-stop = Benchmark $ \(S elapsed (Just mark)) -> do
-         now <- liftIO getCurrentTime
-         return ((), S (elapsed + (diffUTCTime now mark)) Nothing)
-{-# INLINE stop #-}
-
-newtype Benchmark a = Benchmark { runBenchmark :: S -> IO (a, S) }
-
-execBenchmark :: Benchmark a -> S -> IO S
-execBenchmark m s = do
-  (_, s') <- runBenchmark m s
-  return s'
-
-instance Monad Benchmark where
-    return a = Benchmark $ \s -> return (a, s)
-    {-# INLINE return #-}
-
-    m >>= k = Benchmark $ \s -> do
-                           (a, s') <- runBenchmark m s
-                           runBenchmark (k a) s'
-    {-# INLINE (>>=) #-}
-
-    fail str = Benchmark $ \_ -> fail str
-
-instance MonadIO Benchmark where
-    liftIO m = Benchmark $ \s -> m >>= \a -> return (a, s)
-    {-# INLINE liftIO #-}
-
--- ---------------------------------------------------------------------
 -- Running a benchmark
 
 -- TODO: Make sure that iters is > 0.
 
--- | @benchmark iters bm@ runs the action @bm@ @iters@ times measuring
--- the execution time of each run.
-benchmark :: Int -> Benchmark a -> IO Stats
-benchmark iters ma = do
+-- | @benchmark iters setup teardown action@ runs @action@ @iters@
+-- times measuring the execution time of each run.  @setup@ and
+-- @teardown@ are run before and after each run respectively.
+-- @teardown@ will be run even if @action@ raises an exception.
+benchmark :: Int -> IO a -> (a -> IO b) -> (a -> IO c) -> IO Stats
+benchmark iters setup teardown action = do
   timings <- (map millis) `fmap` go iters
   let xs = sort timings
   return Stats
@@ -147,15 +88,19 @@ benchmark iters ma = do
              }
       where
         go 0 = return []
-        go n = do (S elapsed _) <- execBenchmark (start >> ma >> stop) initState
+        go n = do elapsed <- bracket setup teardown $ \a ->
+                             do start <- getCurrentTime
+                                action a
+                                end <- getCurrentTime
+                                return $! end `diffUTCTime` start
                   timings <- go $! n - 1
-                  return $! elapsed : timings
+                  return $ elapsed : timings
 
 -- | Convenience function that runs a benchmark using 'benchmark' and
 -- prints timing statistics.  Writes output to standard output.
-bench :: Int -> Benchmark a -> IO ()
-bench iters bm = do
-  stats <- benchmark iters bm
+bench :: Int -> IO a -> IO ()
+bench iters action = do
+  stats <- benchmark iters (return ()) (const $ return ()) (const action)
   let colWidth = columnWidth [stats]
   printSummaryHeader 0 colWidth
   printSummary colWidth "" stats
@@ -170,9 +115,10 @@ bench iters bm = do
 -- 'benchmark' and prints a timing statistics summary.  Each benchmark
 -- has an associated label that is used to identify the benchmark in
 -- the printed results.  Writes output to standard output.
-benchMany :: Int -> [(String, Benchmark a)] -> IO ()
+benchMany :: Int -> [(String, IO a)] -> IO ()
 benchMany iters bms = do
-  results <- mapM (benchmark iters . snd) bms
+  results <- forM bms $ \(_, action) ->
+             benchmark iters (return ()) (const $ return ()) (const action)
   let lblLen = maximum (map (length . fst) bms) + 2
       colWidth = columnWidth results
   printSummaryHeader lblLen colWidth
