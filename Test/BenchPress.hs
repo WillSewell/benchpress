@@ -67,6 +67,7 @@ import Data.Time.Clock (NominalDiffTime, diffUTCTime, getCurrentTime)
 import qualified Math.Statistics as Math
 import Prelude hiding (max, min)
 import qualified Prelude
+import System.CPUTime (getCPUTime)
 import Text.Printf (printf)
 
 -- ---------------------------------------------------------------------
@@ -77,47 +78,65 @@ import Text.Printf (printf)
 -- | @benchmark iters setup teardown action@ runs @action@ @iters@
 -- times measuring the execution time of each run.  @setup@ and
 -- @teardown@ are run before and after each run respectively.
--- @teardown@ is run even if @action@ raises an exception.
-benchmark :: Int -> IO a -> (a -> IO b) -> (a -> IO c) -> IO Stats
+-- @teardown@ is run even if @action@ raises an exception.  Returns
+-- statistics for both the measured CPU times and wall clock times, in
+-- that order.
+benchmark :: Int -> IO a -> (a -> IO b) -> (a -> IO c) -> IO (Stats, Stats)
 benchmark iters setup teardown action = do
-  timings <- (map millis) `fmap` go iters
-  let xs = sort timings
-  return Stats
-             { min         = head xs
-             , mean        = Math.mean xs
-             , stddev      = Math.stddev xs
-             , median      = Math.median xs
-             , max         = last xs
-             , percentiles = percentiles' xs
-             }
+  (cpuTimes, wallTimes) <- unzip `fmap` go iters
+  let xs        = sort cpuTimes
+      cpuStats  = Stats
+                  { min         = head xs
+                  , mean        = Math.mean xs
+                  , stddev      = Math.stddev xs
+                  , median      = Math.median xs
+                  , max         = last xs
+                  , percentiles = percentiles' xs
+                  }
+      ys        = sort wallTimes
+      wallStats = Stats
+                 { min         = head ys
+                 , mean        = Math.mean ys
+                 , stddev      = Math.stddev ys
+                 , median      = Math.median ys
+                 , max         = last ys
+                 , percentiles = percentiles' ys
+                 }
+  return (cpuStats, wallStats)
       where
         go 0 = return []
-        go n = do elapsed <- bracket setup teardown $ \a ->
-                             do start <- getCurrentTime
-                                action a
-                                end <- getCurrentTime
-                                return $! end `diffUTCTime` start
-                  timings <- go $! n - 1
-                  return $ elapsed : timings
+        go n = do
+          elapsed <- bracket setup teardown $ \a -> do
+            startWall <- getCurrentTime
+            startCpu <- getCPUTime
+            action a
+            endCpu <- getCPUTime
+            endWall <- getCurrentTime
+            return (picosToMillis $! endCpu - startCpu
+                   ,secsToMillis $! endWall `diffUTCTime` startWall)
+          timings <- go $! n - 1
+          return $ elapsed : timings
 
 -- | Convenience function that runs a benchmark using 'benchmark' and
--- prints timing statistics using 'printDetailedStats'.  Writes
--- output to standard output.
+-- prints timing statistics using 'printDetailedStats'.  The
+-- statistics are computed from the measured CPU times.  Writes output
+-- to standard output.
 bench :: Int -> IO a -> IO ()
 bench iters action = do
-  stats <- benchmark iters (return ()) (const $ return ()) (const action)
+  (_, stats) <- benchmark iters (return ()) (const $ return ()) (const action)
   printDetailedStats stats
 
 -- | Convenience function that runs several benchmarks using
 -- 'benchmark' and prints a timing statistics summary using
--- 'printStatsSummaries'.  Each benchmark has an associated label that
--- is used to identify the benchmark in the printed results.  Writes
+-- 'printStatsSummaries'.  The statistics are computed from the
+-- measured CPU times.  Each benchmark has an associated label that is
+-- used to identify the benchmark in the printed results.  Writes
 -- output to standard output.
 benchMany :: Int -> [(String, IO a)] -> IO ()
 benchMany iters bms = do
   results <- forM bms $ \(_, action) ->
              benchmark iters (return ()) (const $ return ()) (const action)
-  printStatsSummaries $ zip (map fst bms) results
+  printStatsSummaries $ zip (map fst bms) (map fst results)
 
 -- ---------------------------------------------------------------------
 -- Benchmark stats
@@ -140,7 +159,7 @@ data Stats = Stats
     -- of the pair is the percentile given as an integer between 0 and
     -- 100, inclusive.  The second component is the execution time of
     -- the slowest iteration within the percentile.
-    } deriving (Eq, Show)
+    } deriving Show
 
 -- ---------------------------------------------------------------------
 -- Pretty-printing stats
@@ -226,6 +245,10 @@ percentiles' xs = zipWith (\p ys -> (p, ys !! (rank p))) ps (repeat xs)
 -- ---------------------------------------------------------------------
 -- Internal utilities
 
--- | Convert microseconds to milliseconds.
-millis :: NominalDiffTime -> Double
-millis t = realToFrac t * (10^(3 :: Int))
+-- | Converts picoseconds to milliseconds.
+picosToMillis :: Integer -> Double
+picosToMillis t = realToFrac t / (10^(9 :: Int))
+
+-- | Converts seconds to milliseconds.
+secsToMillis :: NominalDiffTime -> Double
+secsToMillis t = realToFrac t * (10^(3 :: Int))
