@@ -182,7 +182,8 @@ printDetailedStats stats = do
 
 -- | Prints a summary row for each benchmark with an associated label.
 -- The summary contains the same statistics as in 'printDetailedStats'
--- except for the execution time percentiles.
+-- except for the execution time percentiles.  Writes output to
+-- standard output.
 printStatsSummaries :: [(String, Stats)] -> IO ()
 printStatsSummaries rows = do
   printSummaryHeader lblLen colWidth
