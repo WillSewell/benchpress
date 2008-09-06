@@ -62,7 +62,7 @@ module Test.BenchPress
 
 import Control.Exception (bracket)
 import Control.Monad (forM, forM_)
-import Data.List (intercalate, sort)
+import Data.List (intersperse, sort)
 import Data.Time.Clock (NominalDiffTime, diffUTCTime, getCurrentTime)
 import qualified Math.Statistics as Math
 import Prelude hiding (max, min)
@@ -252,3 +252,6 @@ picosToMillis t = realToFrac t / (10^(9 :: Int))
 -- | Converts seconds to milliseconds.
 secsToMillis :: NominalDiffTime -> Double
 secsToMillis t = realToFrac t * (10^(3 :: Int))
+
+intercalate :: [a] -> [[a]] -> [a]
+intercalate xs = concat . intersperse xs
