@@ -254,5 +254,9 @@ picosToMillis t = realToFrac t / (10^(9 :: Int))
 secsToMillis :: NominalDiffTime -> Double
 secsToMillis t = realToFrac t * (10^(3 :: Int))
 
+-- For GHC 6.6 compatibility.
+
+-- | @intercalate xs xss@ inserts the list @xs@ in between the lists
+-- in @xss@ and concatenates the result.
 intercalate :: [a] -> [[a]] -> [a]
 intercalate xs = concat . intersperse xs
