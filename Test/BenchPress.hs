@@ -95,13 +95,13 @@ benchmark iters setup teardown action = do
                   }
       ys        = sort wallTimes
       wallStats = Stats
-                 { min         = head ys
-                 , mean        = Math.mean ys
-                 , stddev      = Math.stddev ys
-                 , median      = Math.median ys
-                 , max         = last ys
-                 , percentiles = percentiles' ys
-                 }
+                  { min         = head ys
+                  , mean        = Math.mean ys
+                  , stddev      = Math.stddev ys
+                  , median      = Math.median ys
+                  , max         = last ys
+                  , percentiles = percentiles' ys
+                  }
   return (cpuStats, wallStats)
       where
         go 0 = return []
