@@ -123,7 +123,7 @@ benchmark iters setup teardown action = do
 -- to standard output.
 bench :: Int -> IO a -> IO ()
 bench iters action = do
-  (_, stats) <- benchmark iters (return ()) (const $ return ()) (const action)
+  (stats, _) <- benchmark iters (return ()) (const $ return ()) (const action)
   printDetailedStats stats
 
 -- | Convenience function that runs several benchmarks using
