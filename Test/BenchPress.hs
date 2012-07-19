@@ -109,7 +109,7 @@ benchmark iters setup teardown action = do
           elapsed <- bracket setup teardown $ \a -> do
             startWall <- getCurrentTime
             startCpu <- getCPUTime
-            action a
+            _ <- action a
             endCpu <- getCPUTime
             endWall <- getCurrentTime
             return (picosToMillis $! endCpu - startCpu
