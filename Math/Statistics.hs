@@ -4,7 +4,7 @@
 -- Copyright   :  (c) Johan Tibell 2008
 -- License     :  BSD3-style (see LICENSE)
 --
--- Maintainer  :  johan.tibell@gmail.com
+-- Maintainer  :  me@willsewell.com
 -- Stability   :  experimental
 -- Portability :  portable
 --
