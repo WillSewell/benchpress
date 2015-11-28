@@ -176,7 +176,7 @@ printDetailedStats stats = do
   putStrLn "Percentiles (ms)"
   putStr psTbl
     where
-      columns  = map $ \(p, value) -> printf " %3d%%  %5.3f" p value
+      columns  = map (uncurry $ printf " %3d%%  %5.3f")
       colWidth = columnWidth [stats]
       psTbl    = unlines $ columns (percentiles stats)
 
@@ -222,7 +222,7 @@ padHeader w s
 printSummaryHeader :: Int -> Int -> IO ()
 printSummaryHeader lblLen colWidth = do
   putStrLn "Times (ms)"
-  putStr $ (replicate lblLen ' ') ++ " "
+  putStr $ replicate lblLen ' ' ++ " "
   putStrLn $ intercalate "  " $ map (padHeader colWidth) headers
 
 -- | Print a row showing a summary of the given stats.
@@ -237,7 +237,7 @@ printSummary w label (Stats min' mean' sd median' max' _) =
 -- | Compute percentiles given a list of execution times in ascending
 -- order.
 percentiles' :: [Double] -> [(Int, Double)]
-percentiles' xs = zipWith (\p ys -> (p, ys !! (rank p))) ps (repeat xs)
+percentiles' xs = map (\p -> (p, xs !! rank p)) ps
     where
       n      = length xs
       rank p = ceiling ((fromIntegral n / 100) * fromIntegral p :: Double) - 1
