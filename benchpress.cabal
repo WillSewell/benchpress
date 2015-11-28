@@ -9,11 +9,11 @@ Description:    Benchmarks actions and produces statistics
 license:        BSD3
 license-file:   LICENSE
 author:         Johan Tibell
-maintainer:     johan.tibell@gmail.com
+maintainer:     me@willsewell.com
 build-type:     Simple
 cabal-version:  >= 1.2
 category:       Testing
-homepage:       http://github.com/tibbe/benchpress
+homepage:       https://github.com/WillSewell/benchpress
 
 library
   exposed-modules:  Test.BenchPress
