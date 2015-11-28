@@ -25,3 +25,16 @@ library
                   time >= 1 && < 1.6
 
   ghc-options:  -funbox-strict-fields -Wall
+
+executable example
+  main-is:  Main.hs
+
+  -- This is not in build-depends for cabal 1.2 compatibility (requires 1.8)
+  other-modules:  Test.BenchPress
+
+  hs-source-dirs:  example, .
+
+  build-depends:  base,
+                  bytestring
+
+  ghc-options:  -funbox-strict-fields -Wall

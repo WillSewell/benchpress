@@ -15,6 +15,7 @@
 --
 -- Here's an example showing a benchmark of copying a file:
 --
+-- > import Control.Monad (when)
 -- > import qualified Data.ByteString as B
 -- > import System.IO
 -- > import Test.BenchPress
@@ -32,9 +33,8 @@
 -- >       go = do
 -- >         bs <- B.hGet inf blockSize
 -- >         let numRead = B.length bs
--- >         if numRead > 0
--- >            then B.hPut outf bs >> go
--- >            else return ()
+-- >         when (numRead > 0) $
+-- >            B.hPut outf bs >> go
 -- >
 -- > main :: IO ()
 -- > main = bench 100 $ do
