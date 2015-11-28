@@ -73,8 +73,6 @@ import Text.Printf (printf)
 -- ---------------------------------------------------------------------
 -- Running a benchmark
 
--- TODO: Make sure that iters is > 0.
-
 -- | @benchmark iters setup teardown action@ runs @action@ @iters@
 -- times measuring the execution time of each run.  @setup@ and
 -- @teardown@ are run before and after each run respectively.
@@ -82,27 +80,30 @@ import Text.Printf (printf)
 -- statistics for both the measured CPU times and wall clock times, in
 -- that order.
 benchmark :: Int -> IO a -> (a -> IO b) -> (a -> IO c) -> IO (Stats, Stats)
-benchmark iters setup teardown action = do
-  (cpuTimes, wallTimes) <- unzip `fmap` go iters
-  let xs        = sort cpuTimes
-      cpuStats  = Stats
-                  { min         = head xs
-                  , mean        = Math.mean xs
-                  , stddev      = Math.stddev xs
-                  , median      = Math.median xs
-                  , max         = last xs
-                  , percentiles = percentiles' xs
-                  }
-      ys        = sort wallTimes
-      wallStats = Stats
-                  { min         = head ys
-                  , mean        = Math.mean ys
-                  , stddev      = Math.stddev ys
-                  , median      = Math.median ys
-                  , max         = last ys
-                  , percentiles = percentiles' ys
-                  }
-  return (cpuStats, wallStats)
+benchmark iters setup teardown action =
+  if iters < 1
+    then error "benchmark: iters must be greater than 0"
+    else do
+      (cpuTimes, wallTimes) <- unzip `fmap` go iters
+      let xs        = sort cpuTimes
+          cpuStats  = Stats
+                      { min         = head xs
+                      , mean        = Math.mean xs
+                      , stddev      = Math.stddev xs
+                      , median      = Math.median xs
+                      , max         = last xs
+                      , percentiles = percentiles' xs
+                      }
+          ys        = sort wallTimes
+          wallStats = Stats
+                      { min         = head ys
+                      , mean        = Math.mean ys
+                      , stddev      = Math.stddev ys
+                      , median      = Math.median ys
+                      , max         = last ys
+                      , percentiles = percentiles' ys
+                      }
+      return (cpuStats, wallStats)
       where
         go 0 = return []
         go n = do
