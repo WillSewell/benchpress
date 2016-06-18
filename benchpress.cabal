@@ -20,9 +20,9 @@ library
 
   other-modules:  Math.Statistics
 
-  build-depends:  base >= 2.0 && < 4.9,
+  build-depends:  base >= 2.0 && < 4.10,
                   mtl >= 1 && < 2.3,
-                  time >= 1 && < 1.6
+                  time >= 1 && < 1.7
 
   ghc-options:  -funbox-strict-fields -Wall
 
