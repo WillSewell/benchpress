@@ -22,7 +22,7 @@ library
 
   build-depends:  base >= 2.0 && < 4.10,
                   mtl >= 1 && < 2.3,
-                  time >= 1 && < 1.7
+                  time >= 1 && < 1.9
 
   ghc-options:  -funbox-strict-fields -Wall
 
