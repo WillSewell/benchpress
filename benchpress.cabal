@@ -20,9 +20,9 @@ library
 
   other-modules:  Math.Statistics
 
-  build-depends:  base >= 2.0 && < 4.10,
+  build-depends:  base >= 2.0 && < 4.11,
                   mtl >= 1 && < 2.3,
-                  time >= 1 && < 1.9
+                  time >= 1 && < 1.10
 
   ghc-options:  -funbox-strict-fields -Wall
 
@@ -31,6 +31,7 @@ executable example
 
   -- This is not in build-depends for cabal 1.2 compatibility (requires 1.8)
   other-modules:  Test.BenchPress
+                  Math.Statistics
 
   hs-source-dirs:  example, .
 
