@@ -11,7 +11,7 @@ license-file:   LICENSE
 author:         Johan Tibell
 maintainer:     me@willsewell.com
 build-type:     Simple
-cabal-version:  >= 1.2
+cabal-version:  >= 1.10
 category:       Testing
 homepage:       https://github.com/WillSewell/benchpress
 
