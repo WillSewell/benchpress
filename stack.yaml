@@ -1,5 +1,14 @@
 packages:
 - '.'
-resolver: nightly-2020-10-16
+resolver: nightly-2021-03-28
+compiler: ghc-9.0.1
+compiler-check: match-exact
 extra-deps:
+- array-0.5.4.0
+- base-4.15.0.0
+- bytestring-0.11.1.0
+- deepseq-1.4.5.0
+- ghc-bignum-1.0
+- mtl-2.2.2
 - time-1.11
+- transformers-0.5.6.2
