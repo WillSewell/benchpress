@@ -1,5 +1,5 @@
 name:           benchpress
-version:        0.2.2.15
+version:        0.2.2.16
 synopsis:       Micro-benchmarking with detailed statistics.
 Description:    Benchmarks actions and produces statistics
                 such as min, mean, median, standard deviation,
