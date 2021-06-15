@@ -22,7 +22,7 @@ library
 
   build-depends:  base >= 2.0 && < 4.16,
                   mtl >= 1 && < 2.3,
-                  time >= 1 && < 1.12
+                  time >= 1 && < 1.13
   
   default-language:  Haskell2010
 
