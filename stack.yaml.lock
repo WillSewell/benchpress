@@ -3,66 +3,38 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages:
-- completed:
-    hackage: array-0.5.4.0@sha256:2b2425e01d592c0e66594c008405ea4c6f6e4d929daeddabbd81be9bb49ebffa,1588
-    pantry-tree:
-      size: 1135
-      sha256: e17dfafde2f226674cffd56b1f445c332b6e5855860f79dedd9de0b6916e7ff0
-  original:
-    hackage: array-0.5.4.0
-- completed:
-    hackage: base-4.15.0.0@sha256:5b769b2e609e714bbfa82701823e9ef0ddec0f1c1898916973be5c9aee9c2225,11783
-    pantry-tree:
-      size: 19179
-      sha256: 93a5a4b65c8e409a56b043bc1623d30a534edbb636346de0fb0bfd214f3bb4ca
-  original:
-    hackage: base-4.15.0.0
-- completed:
-    hackage: bytestring-0.11.1.0@sha256:84a15ec06aca21c4af8772a0e847fdda1b58235b801774dd205edb03bfeb8518,7631
-    pantry-tree:
-      size: 2654
-      sha256: 0d357667b42c3b4f5860b3c22d867254a4fb0c526280d31f3ca96833065cbc0f
-  original:
-    hackage: bytestring-0.11.1.0
-- completed:
-    hackage: deepseq-1.4.5.0@sha256:5238d30981b821596bc41f9f177352328f003b49c31d35ea7daab55f8a8efade,2961
-    pantry-tree:
-      size: 385
-      sha256: 2346d92e2edd40dae49bac757b7e3f20eb3c75039a5334f2eb5c380784ad20a7
-  original:
-    hackage: deepseq-1.4.5.0
-- completed:
-    hackage: ghc-bignum-1.0@sha256:eb3f314d44e7a587b2aa07dfd1b44a24049374bad57f4b002923a87d169835cd,2820
-    pantry-tree:
-      size: 1754
-      sha256: be6f1bb2461c3baf1c7b7750bb33e98fa5da3b832d10e3c07a0901be9fe52427
-  original:
-    hackage: ghc-bignum-1.0
-- completed:
-    hackage: mtl-2.2.2@sha256:1050fb71acd9f5d67da7d992583f5bd0eb14407b9dc7acc122af1b738b706ca3,2261
-    pantry-tree:
-      size: 1713
-      sha256: b8bdc2259e2f943a7252fb164805666fe108ac959d398e0af27b43ba2ebc241c
-  original:
-    hackage: mtl-2.2.2
-- completed:
-    hackage: time-1.11@sha256:fefd32bab844f3c8dd9f1b4e7b22f5f919d09ac73312ab3069c03c1966bd0c9d,6226
-    pantry-tree:
-      size: 7047
-      sha256: a22c3aebd53415013fc70e18c3cf75a7cfd6b8bbe818fbb6e0d551c6d174c2a4
-  original:
-    hackage: time-1.11
-- completed:
-    hackage: transformers-0.5.6.2@sha256:6c959d14430f4deffb99579ba019de07c3d852a2122b6f449344386c7d75ff1d,3172
-    pantry-tree:
-      size: 2512
-      sha256: c79246ba7d61392c2f214376fed3c2a05e4b2649b93ec2c849a86493f278ace0
-  original:
-    hackage: transformers-0.5.6.2
 snapshots:
-- completed:
-    size: 576325
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2021/3/28.yaml
-    sha256: 0bf0b10c82bc04583304b918614bab9667363e8406f6bf4e4e00563655e845fb
-  original: nightly-2021-03-28
+- original: nightly-2021-06-14
+  completed:
+    sha256: a5edd4e65bdb6e56760e7d7c1275d2c3b24fb95e730e957e9d60824315e8801d
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2021/6/14.yaml
+    size: 585393
+packages:
+- original:
+    hackage: bytestring-0.11.1.0
+  completed:
+    pantry-tree:
+      sha256: 0d357667b42c3b4f5860b3c22d867254a4fb0c526280d31f3ca96833065cbc0f
+      size: 2654
+    hackage: bytestring-0.11.1.0@sha256:84a15ec06aca21c4af8772a0e847fdda1b58235b801774dd205edb03bfeb8518,7631
+- original:
+    hackage: deepseq-1.4.5.0
+  completed:
+    pantry-tree:
+      sha256: 2346d92e2edd40dae49bac757b7e3f20eb3c75039a5334f2eb5c380784ad20a7
+      size: 385
+    hackage: deepseq-1.4.5.0@sha256:5238d30981b821596bc41f9f177352328f003b49c31d35ea7daab55f8a8efade,2961
+- original:
+    hackage: ghc-bignum-1.0
+  completed:
+    pantry-tree:
+      sha256: be6f1bb2461c3baf1c7b7750bb33e98fa5da3b832d10e3c07a0901be9fe52427
+      size: 1754
+    hackage: ghc-bignum-1.0@sha256:eb3f314d44e7a587b2aa07dfd1b44a24049374bad57f4b002923a87d169835cd,2820
+- original:
+    hackage: time-1.12
+  completed:
+    pantry-tree:
+      sha256: 7cc3bf724fa7963044107f6f136cefb6e8b88e962df4dd0ee4ce02ec8ff06b43
+      size: 7060
+    hackage: time-1.12@sha256:3628ae73e599c15208ba49b136af41ac4c376c269d2b2831e4583553410c5ed2,6234
