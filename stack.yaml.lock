@@ -13,7 +13,7 @@ packages:
     hackage: time-1.13
 snapshots:
 - completed:
-    size: 588161
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2021/10/18.yaml
-    sha256: a65d0340e04347b2f7598695bdfe28b6872a9c02998a79b86a524e45f999355e
-  original: nightly-2021-10-18
+    size: 517915
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2022/3/23.yaml
+    sha256: cb8f5a11e08dfb56a756ae96455346488efb1dadef3d8670d8c566ce6625e6ce
+  original: nightly-2022-03-23
