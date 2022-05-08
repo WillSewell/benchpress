@@ -1,5 +1,6 @@
 packages:
 - '.'
-resolver: nightly-2022-03-23
+resolver: nightly-2022-05-05
 extra-deps:
+- mtl-2.3
 - time-1.13
