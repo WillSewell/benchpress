@@ -5,6 +5,13 @@
 
 packages:
 - completed:
+    hackage: mtl-2.3@sha256:9850384335d39f4307bdd8010c61b61cc2adb88adcb6820f8372f4d2f4905a3d,1830
+    pantry-tree:
+      size: 1852
+      sha256: 0f60bd67fb750f8ce7471fbf8b88b62b75079270c3dc56b7ed59920e57fa124a
+  original:
+    hackage: mtl-2.3
+- completed:
     hackage: time-1.13@sha256:30ed9ad5d27730a367b20805581cbc525cbeee688c865549347407c2b286be06,6293
     pantry-tree:
       size: 7208
@@ -13,7 +20,7 @@ packages:
     hackage: time-1.13
 snapshots:
 - completed:
-    size: 517915
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2022/3/23.yaml
-    sha256: cb8f5a11e08dfb56a756ae96455346488efb1dadef3d8670d8c566ce6625e6ce
-  original: nightly-2022-03-23
+    size: 572782
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2022/5/5.yaml
+    sha256: 42b5030fc96fe064d61c662330df4d0369c0ab48648ca2a51705cf26b32550a0
+  original: nightly-2022-05-05
