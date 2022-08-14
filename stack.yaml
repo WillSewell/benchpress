@@ -2,5 +2,4 @@ packages:
 - '.'
 resolver: nightly-2022-05-05
 extra-deps:
-- mtl-2.3
-- time-1.13
+- time-1.12.2
