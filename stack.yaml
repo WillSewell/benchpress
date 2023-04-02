@@ -1,7 +1,8 @@
 packages:
-- '.'
-resolver: nightly-2022-08-14
-compiler: ghc-9.4.1
+  - .
+resolver: nightly-2023-04-02
+compiler: ghc-9.6.1
 compiler-check: match-exact
 extra-deps:
-- time-1.12.2
+  - base-4.18.0.0
+allow-newer: true

@@ -5,15 +5,15 @@
 
 packages:
 - completed:
-    hackage: time-1.12.2@sha256:88e8493d9130038d3b9968a2530a0900141cd3d938483c83dde56e12b875ebc8,6510
+    hackage: base-4.18.0.0@sha256:df2cb2e3b13ac71dcb105dd53cf219dbd4627587a697aa75b5edcba0fba640e8,13052
     pantry-tree:
-      size: 7264
-      sha256: de0ab314661da3788b5dad20254e44929b1659b00d32b5a0cd54922a05e006e8
+      sha256: 1eca21f3b3fd68d05fc2f36d6a3f070577ba9d597b9dc0095da49c5c6ea1553e
+      size: 21126
   original:
-    hackage: time-1.12.2
+    hackage: base-4.18.0.0
 snapshots:
 - completed:
-    size: 630417
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2022/8/14.yaml
-    sha256: f06063214f995549c436b7b091e7ba6785a4bd146d05e963036b451adeb3bd8e
-  original: nightly-2022-08-14
+    sha256: 12e1d19832c69e6d8c7bbb039141c84de7b787366b9f89f476e6b86b7ae4491f
+    size: 600122
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2023/4/2.yaml
+  original: nightly-2023-04-02
