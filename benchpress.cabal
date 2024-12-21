@@ -20,7 +20,7 @@ library
 
   other-modules:  Math.Statistics
 
-  build-depends:  base >= 2.0 && < 4.21,
+  build-depends:  base >= 2.0 && < 4.22,
                   mtl >= 1 && < 2.4,
                   time >= 1 && < 1.15
 
@@ -37,7 +37,7 @@ executable example
 
   hs-source-dirs:  example, .
 
-  build-depends:  base >= 2.0 && < 4.21,
+  build-depends:  base >= 2.0 && < 4.22,
                   bytestring >= 0.12 && < 0.13,
                   time >= 1 && < 1.15
 
