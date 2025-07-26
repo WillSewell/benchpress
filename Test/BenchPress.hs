@@ -49,6 +49,7 @@
 module Test.BenchPress
     ( -- * Running a benchmark
       benchmark,
+      benchmarkWithResults,
       bench,
       benchMany,
 
@@ -80,11 +81,16 @@ import Text.Printf (printf)
 -- statistics for both the measured CPU times and wall clock times, in
 -- that order.
 benchmark :: Int -> IO a -> (a -> IO b) -> (a -> IO c) -> IO (Stats, Stats)
-benchmark iters setup teardown action =
+benchmark iters setup teardown action = do
+  (_, cpu, wall) <- benchmarkWithResults iters setup teardown action
+  pure (cpu, wall)
+
+benchmarkWithResults :: Int -> IO a -> (a -> IO b) -> (a -> IO c) -> IO ([c], Stats, Stats)
+benchmarkWithResults iters setup teardown action =
   if iters < 1
     then error "benchmark: iters must be greater than 0"
     else do
-      (cpuTimes, wallTimes) <- unzip `fmap` go iters
+      (results, cpuTimes, wallTimes) <- unzip3 `fmap` go iters
       let xs        = sort cpuTimes
           cpuStats  = Stats
                       { min         = head xs
@@ -103,18 +109,22 @@ benchmark iters setup teardown action =
                       , max         = last ys
                       , percentiles = percentiles' ys
                       }
-      return (cpuStats, wallStats)
+      return (results, cpuStats, wallStats)
       where
         go 0 = return []
         go n = do
           elapsed <- bracket setup teardown $ \a -> do
             startWall <- getCurrentTime
             startCpu <- getCPUTime
-            _ <- action a
+            result <- action a
             endCpu <- getCPUTime
             endWall <- getCurrentTime
-            return (picosToMillis $! endCpu - startCpu
-                   ,secsToMillis $! endWall `diffUTCTime` startWall)
+            let
+              cpuTime = picosToMillis $! endCpu - startCpu
+              wallTime = secsToMillis $! endWall `diffUTCTime` startWall
+            return (result
+                   , cpuTime
+                   , wallTime)
           timings <- go $! n - 1
           return $ elapsed : timings
 
